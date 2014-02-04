@@ -218,3 +218,7 @@ body {
 .messages p:last-child{
 	margin-top: 5px;
 }
+
+.tabuleiro_opaco{
+	color: #b7d6e4;
+}

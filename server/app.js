@@ -289,7 +289,7 @@ Servidor.realizaCombate = function(combate){ //Exclui a bandeira da partida
      			resultCombate.movimentaPeca = true;
      			Servidor.excluiPecaDaPartida(combate.pecaAtacada);    // exclui a bomba da partida
      		}
-     		else{
+     		else {
      			resultCombate.vencedorDaJogada = jogadorQueAtacou; // bomba destroi
      			Servidor.excluiPecaDaPartida(combate.pecaEmMovimento); //Exclui a peca destruida pela bomba
      		}
@@ -299,6 +299,11 @@ Servidor.realizaCombate = function(combate){ //Exclui a bandeira da partida
 	     			resultCombate.vencedorDaJogada = combate.valorPecaAtacada; // se for marechal, mata marechal
 	     			resultCombate.movimentaPeca = true;
 	     			Servidor.excluiPecaDaPartida(combate.valorPecaAtacada); //Exclui o marechal da partida
+	     		}
+	     		else if(parseInt(valorPecaAtacada) == 0){
+	     			resultCombate.vencedorDaJogada = ""; 
+	    			Servidor.excluiPecaDaPartida(combate.pecaAtacada);
+	    			Servidor.excluiPecaDaPartida(combate.pecaEmMovimento);
 	     		}
 	     		else{
 	     			resultCombate.vencedorDaJogada = jogadorQueAtacou;

@@ -99,7 +99,6 @@ Tabuleiro.posicaoEstaOcupada = function(posicao){
 Tabuleiro.posicaoOcupadaPeloAdversario = function(posicao){
     var peca = Tabuleiro.pecaQueEstaNaPosicao(posicao);
     if(peca != undefined){
-        console.info(($(peca).attr("data-patente")));        
         if(($(peca).attr("data-patente") == undefined) || ($(peca).attr("data-patente") == null)){
             return true;
         }else{
@@ -297,9 +296,27 @@ Tabuleiro.calculaPosicoes = function() {
     return false;
 }
 
+Tabuleiro.desabilitaTabuleiroAdversario = function(){
+    if(Estado.numeroDoJogador == 1 ){
+        for(var linha = 5; linha < 11; linha++){
+            for(var coluna = 1; coluna < 11; coluna++){
+                var posicao = Tabuleiro.posicaoPorCoordenadas(linha, coluna);
+                $(posicao).addClass("tabuleiro_opaco");
+            }
+        }
+    }
+    else if(Estado.numeroDoJogador == 2){
+        for(var linha = 1; linha < 5; linha++){
+            for(var coluna = 1; coluna < 11; coluna++){
+                var posicao = Tabuleiro.posicaoPorCoordenadas(linha, coluna);
+                $(posicao).addClass("tabuleiro_opaco");
+            }
+        }
+    }
+}
+
 Tabuleiro.cliqueDaPeca = function() {    
     $(".peca").click(function() { 
-
 
         var jogoAtual = Estado.jogoAtual();
         if((Tabuleiro.pecaClicadaImovel($(this))) && (jogoAtual.estado != EstadosDoJogo.PREPARANDO)){
@@ -307,12 +324,10 @@ Tabuleiro.cliqueDaPeca = function() {
         }
         else{
             if(jogoAtual.estado == EstadosDoJogo.PREPARANDO){
+                Tabuleiro.desabilitaTabuleiroAdversario();
                 Tabuleiro.pecaClicada = {
                  peca: $(this)
                 };
-                if (Tabuleiro.calculaPosicoes()) {
-                     Tabuleiro.mostraOpcoes();
-                }
             }
             else{
                 if(jogoAtual.jogador == Estado.partida.jogadorDaVez){
@@ -387,7 +402,7 @@ Tabuleiro.realizaAtaque = function(resultCombate){
         }
       $(pecaEmMovimento).remove();
     }
-    $(".posicao").removeClass("opcaoDeMovimento");
+      $(".posicao").removeClass("opcaoDeMovimento");
     if(resultCombate.isEmpate){
         alert("Partida encerrada: jogo empatado!");
         Estado.limpaPartida();
@@ -402,7 +417,13 @@ Tabuleiro.realizaAtaque = function(resultCombate){
 Tabuleiro.cliqueNoTabuleiro = function() {
     $(".posicao").click(function(){
         var posicao = $(this);
-        Tabuleiro.iniciaMovimentoDaPeca($(this));
+        var coordenada = {
+            linha: parseInt($(posicao).attr("data-row")),
+            coluna: parseInt($(posicao).attr("data-column"))
+        }
+        if(!Tabuleiro.eMesmaPosicao(coordenada)){            
+            Tabuleiro.iniciaMovimentoDaPeca($(this));
+        }
     });
 };
 
