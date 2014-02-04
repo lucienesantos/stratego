@@ -366,6 +366,14 @@ Tabuleiro.realizaAtaque = function(resultCombate){
     var posicaoAtacada = Tabuleiro.posicaoPorCoordenadas(resultCombate.pecaAtacada.linha, resultCombate.pecaAtacada.coluna);
     var pecaAtacada = Tabuleiro.pecaPorId(resultCombate.pecaAtacada.id);
     var pecaEmMovimento = Tabuleiro.pecaPorId(resultCombate.pecaEmMovimento.id);
+    if ($(pecaAtacada).hasClass("inimigo")){
+        var cor = $(pecaAtacada).attr("data-color");
+        $(pecaAtacada).removeClass(resultCombate.pecaAtacada.patente + "_" + cor);
+    }
+    if ($(pecaEmMovimento).hasClass("inimigo")){
+        var cor = $(pecaEmMovimento).attr("data-color");
+        $(pecaEmMovimento).removeClass(resultCombate.pecaEmMovimento.patente + "_" + cor);
+    }
     if(resultCombate.movimentaPeca){
         $(pecaAtacada).remove();
         var pecaEmMovimentoAux = $(pecaEmMovimento).clone();
@@ -471,8 +479,10 @@ Tabuleiro.desenhaJogoAdversario = function (jogoAdversario){
                                  .addClass("inimigo");
         if(Estado.numeroDoJogador == 1){
             soldado.addClass("exercito_"+"azul");
+            soldado.attr("data-color", "azul");
         }else if(Estado.numeroDoJogador == 2){
             soldado.addClass("exercito_"+"vermelho");
+            soldado.attr("data-color", "vermelho");
         }        
         $(posicao).append(soldado);
      }
@@ -519,13 +529,13 @@ Tabuleiro.exibirCombate = function(resultCombate){
     var posicaoAtacada = Tabuleiro.posicaoPorCoordenadas(resultCombate.pecaAtacada.linha, resultCombate.pecaAtacada.coluna);
     var posicaoEmMovimento = Tabuleiro.posicaoPorCoordenadas(resultCombate.pecaEmMovimento.linha, resultCombate.pecaEmMovimento.coluna);   
     var indiceDoJogadorDaVez = Tabuleiro.getIndiceDoJogadorLista(resultCombate.jogadorDaVez); 
-
-    if (indiceDoJogadorDaVez == 1) {        
-        $(posicaoAtacada).children().addClass(resultCombate.pecaAtacada.patente + "_azul");
-        $(posicaoEmMovimento).children().addClass(resultCombate.pecaEmMovimento.patente + "_vermelho");
-    } else {
-        $(posicaoAtacada).children().addClass(resultCombate.pecaAtacada.patente + "_vermelho");
-        $(posicaoEmMovimento).children().addClass(resultCombate.pecaEmMovimento.patente + "_azul");    
+    if ($(posicaoAtacada).children().hasClass("inimigo")) {
+        var cor = $(posicaoAtacada).children().attr("data-color");
+        $(posicaoAtacada).children().addClass(resultCombate.pecaAtacada.patente + "_" + cor);
+    }
+    if ($(posicaoEmMovimento).children().hasClass("inimigo")) {
+        var cor = $(posicaoEmMovimento).children().attr("data-color");
+        $(posicaoEmMovimento).children().addClass(resultCombate.pecaEmMovimento.patente + "_" + cor);
     }
     setTimeout(function(){Tabuleiro.realizaAtaque(resultCombate)} , 2000);
 };
