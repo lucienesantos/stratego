@@ -49,12 +49,6 @@ var EstadosDoJogo = {
 	INICIADO: 4
 	
 }
-/*var partida = {
-	listaDeJogos: [],
-	estado: "",
-	jogadorDaVez: "",
-	jogadores: []
-}*/
  
 var socketsDeJogadores = [];
 
