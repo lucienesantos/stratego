@@ -180,7 +180,6 @@ Servidor.jogadorAdversario = function(jogadoAtual){
 	}
 }
 
-Servidor.getJogadorAdversario
 
 Servidor.preparaJogadaCombate = function(jogada){
 	var pecaAtacada = {};
@@ -265,14 +264,14 @@ Servidor.realizaCombate = function(combate){ //Exclui a bandeira da partida
     var valorPecaAtacada =  combate.pecaAtacada.valor;
     var valorPecaEmMovimento = combate.pecaEmMovimento.valor;
 
-    var jogadorAdversario = Servidor.jogadorAdversario();
+    var jogadorQueAtacou = Servidor.jogadorAdversario(combate.jogadorDaVez);
 
     var resultCombate ={
      	vencedorDaJogada : "",
      	vencedorDaPartida : "",
      	pecaAtacada: combate.pecaAtacada,
      	pecaEmMovimento: combate.pecaEmMovimento,
-     	jogadorDaVez: jogadorAdversario,
+     	jogadorDaVez: jogadorQueAtacou,
      	movimentaPeca: false,
      	isEmpate: false
 
@@ -280,6 +279,8 @@ Servidor.realizaCombate = function(combate){ //Exclui a bandeira da partida
     if(valorPecaAtacada == "F"){ // fim de jogo
      	resultCombate.vencedorDaPartida = combate.jogadorDaVez;
      	Servidor.excluiPecaDaPartida(combate.pecaAtacada); //Exclui a bandeira da partida
+     	resultCombate.vencedorDaPartida = jogadorQueAtacou;
+     	resultCombate.isEmpate = false;
     }
     else {
      	if(valorPecaAtacada == "B"){ // se for bomba 
@@ -289,7 +290,7 @@ Servidor.realizaCombate = function(combate){ //Exclui a bandeira da partida
      			Servidor.excluiPecaDaPartida(combate.pecaAtacada);    // exclui a bomba da partida
      		}
      		else{
-     			resultCombate.vencedorDaJogada = Servidor.jogadorAdversario(); // bomba destroi
+     			resultCombate.vencedorDaJogada = jogadorQueAtacou; // bomba destroi
      			Servidor.excluiPecaDaPartida(combate.pecaEmMovimento); //Exclui a peca destruida pela bomba
      		}
      	}
@@ -300,7 +301,7 @@ Servidor.realizaCombate = function(combate){ //Exclui a bandeira da partida
 	     			Servidor.excluiPecaDaPartida(combate.valorPecaAtacada); //Exclui o marechal da partida
 	     		}
 	     		else{
-	     			resultCombate.vencedorDaJogada = Servidor.jogadorAdversario();
+	     			resultCombate.vencedorDaJogada = jogadorQueAtacou;
 	     			Servidor.excluiPecaDaPartida(combate.pecaEmMovimento); // Exclui o espião
 	     		}
 	    }
@@ -310,7 +311,7 @@ Servidor.realizaCombate = function(combate){ //Exclui a bandeira da partida
 	    	 Servidor.excluiPecaDaPartida(combate.pecaAtacada);
 	    }
 	    else if(parseInt(valorPecaEmMovimento) < parseInt(valorPecaAtacada)){
-	    	 resultCombate.vencedorDaJogada = Servidor.jogadorAdversario();
+	    	 resultCombate.vencedorDaJogada = jogadorQueAtacou;
 	    	 Servidor.excluiPecaDaPartida(combate.pecaEmMovimento);
 	    } 	
 	    else {
@@ -318,15 +319,21 @@ Servidor.realizaCombate = function(combate){ //Exclui a bandeira da partida
 	    	Servidor.excluiPecaDaPartida(combate.pecaAtacada);
 	    	Servidor.excluiPecaDaPartida(combate.pecaEmMovimento);
 	    }
-    }
- 
+	   var resultadoVerificacao = Servidor.verificaSeParticaAcabou();
+	   if(!resultadoVerificacao.isEmpate){
+		  resultCombate.vencedorDaPartida = resultadoVerificacao.nomeVencedor;
+	   }else{
+	   	resultCombate.isEmpate = resultadoVerificacao;
+	   }
+    } 
 
-   var resultadoVerificacao = Servidor.verificaSeParticaAcabou();
-   if(!resultadoVerificacao.isEmpate){
-	  resultCombate.vencedorDaPartida = Servidor.jogadorAdversario();
-   }
    return resultCombate;
 };
+
+Servidor.limpaPartida = function(){
+	Servidor.partida = {};
+};
+
 
 io.sockets.on('connection', function(socket) {
 
@@ -391,18 +398,14 @@ io.sockets.on('connection', function(socket) {
 		var adversario = Servidor.jogadorAdversario(jogada.jogadorDaVez);
 		io.sockets.emit("jogadorDaVez", adversario);
 	});
+
+	socket.on("limpaPartida", function(){
+		Servidor.limpaPartida();
+		io.sockets.emit("zeraPartida", Servidor.partida);
+	});
 	
    	socket.on('disconnect', function() {
-	   /* var jogador = socketsDeJogadores[socket.id];
-	    delete socketsDeJogadores[socket.id];
-		var i = Servidor.getIndiceDoJogoNaListaPorJogador(jogador);
-		// após corrigir "disconnect" retirar if
-		partida.listaDeJogos.length = 1;
-		partida.jogadores.length = 1;
-		var j = Servidor.getIndiceDoJogadorLista(jogador);
-		//partida.estado = EstadosDaPartida.ENCERRADA_BRUSCAMENTE;
-		delete partida.listaDeJogos[i];
-	    delete partida.jogadores[j];
-*/
+   		io.sockets.disconnect();
+	   
   });
 });

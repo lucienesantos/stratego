@@ -223,14 +223,11 @@ Tabuleiro.calculaPosicoesDoSoldado = function(linha, coluna){
         }        
     }
     return opcoes;
-
 }
-
 
 Tabuleiro.calculaOpcoesDeMovimento = function(linha, coluna) {
     var opcoes = [];
     
-
     if(Tabuleiro.pecaClicada.patente == "soldado"){
         var opcoes = Tabuleiro.calculaPosicoesDoSoldado(linha, coluna);
         return opcoes;
@@ -244,7 +241,6 @@ Tabuleiro.calculaOpcoesDeMovimento = function(linha, coluna) {
     if (Tabuleiro.naoELago(posicaoColunaEsquerda)){
         if(!(Tabuleiro.posicaoEstaOcupada(posicaoColunaEsquerda))){ // verifica se a posicao não está ocupada
             opcoes.push(posicaoColunaEsquerda);
-
 
         }else{
             if(Tabuleiro.posicaoOcupadaPeloAdversario(posicaoColunaEsquerda)){
@@ -284,7 +280,7 @@ Tabuleiro.calculaOpcoesDeMovimento = function(linha, coluna) {
         }
     }
     return opcoes; 
-};
+}
 
 Tabuleiro.calculaPosicoes = function() {
     if ($(Tabuleiro.pecaClicada.peca).parent().hasClass("posicao")) {
@@ -299,11 +295,12 @@ Tabuleiro.calculaPosicoes = function() {
         return true;
     }  
     return false;
-};
+}
 
 Tabuleiro.cliqueDaPeca = function() {    
     $(".peca").click(function() { 
-        // Se a peça for imóvel e o estado da partida jogo
+
+
         var jogoAtual = Estado.jogoAtual();
         if((Tabuleiro.pecaClicadaImovel($(this))) && (jogoAtual.estado != EstadosDoJogo.PREPARANDO)){
             alert("Peça imóvel");
@@ -336,7 +333,7 @@ Tabuleiro.cliqueDaPeca = function() {
             }
         }
     });
-};
+}
 
 Tabuleiro.movePecaClicadaPara = function(destino) {
 
@@ -346,7 +343,6 @@ Tabuleiro.movePecaClicadaPara = function(destino) {
     $(".posicao").removeClass("opcaoDeMovimento");
     Tabuleiro.pecaClicada = undefined;
 };
-
 
 Tabuleiro.movendoPeca = function(objeto) {
     var parent = $(Tabuleiro.pecaClicada.peca).parent().attr("id");
@@ -367,62 +363,38 @@ Tabuleiro.validaMovimento = function(destino){
 }
 
 Tabuleiro.realizaAtaque = function(resultCombate){
-    //Estado.partida.jogadorDaVez = resultCombate.jogadorDaVez;
     var posicaoAtacada = Tabuleiro.posicaoPorCoordenadas(resultCombate.pecaAtacada.linha, resultCombate.pecaAtacada.coluna);
     var pecaAtacada = Tabuleiro.pecaPorId(resultCombate.pecaAtacada.id);
     var pecaEmMovimento = Tabuleiro.pecaPorId(resultCombate.pecaEmMovimento.id);
     if(resultCombate.movimentaPeca){
-        //movimenta peca e desaparece a outra
         $(pecaAtacada).remove();
         var pecaEmMovimentoAux = $(pecaEmMovimento).clone();
         $(posicaoAtacada).append(pecaEmMovimentoAux);
-        $(pecaEmMovimento).remove();// remover do exercito da lista do jogo
-               
+        $(pecaEmMovimento).remove();
+
     }else {
         if(resultCombate.vencedorDaJogada == ""){
             $(pecaEmMovimento).remove();
             $(pecaAtacada).remove();
-           
         }
-      //remove a peca em movimento
       $(pecaEmMovimento).remove();
     }
-//    $("#nome-jogador-da-vez").html("Jogador da Vez: " + resultCombate.jogadorDaVez);
     $(".posicao").removeClass("opcaoDeMovimento");
-}
-
-Tabuleiro.exibirCombate = function(resultCombate){
-
-    var posicaoAtacada = Tabuleiro.posicaoPorCoordenadas(resultCombate.pecaAtacada.linha, resultCombate.pecaAtacada.coluna);
-    var posicaoEmMovimento = Tabuleiro.posicaoPorCoordenadas(resultCombate.pecaEmMovimento.linha, resultCombate.pecaEmMovimento.coluna);   
-    if (resultCombate.jogadorDaVez == "2") {        
-        $(posicaoAtacada).children().addClass(resultCombate.pecaAtacada.patente + "_azul");
-        $(posicaoEmMovimento).children().addClass(resultCombate.pecaEmMovimento.patente + "_vermelho");
-    } else {
-        $(posicaoAtacada).children().addClass(resultCombate.pecaAtacada.patente + "_vermelho");
-        $(posicaoEmMovimento).children().addClass(resultCombate.pecaEmMovimento.patente + "_azul");    
+    if(resultCombate.isEmpate){
+        alert("Partida encerrada: jogo empatado!");
+        Estado.limpaPartida();
+    } else{
+        if((!resultCombate.isEmpate) && (resultCombate.vencedorDaPartida != "")){
+        alert("Vitória de " + resultCombate.vencedorDaPartida);
+        Estado.limpaPartida();
     }
-    setTimeout(function(){Tabuleiro.realizaAtaque(resultCombate)} , 2000);
-};
+    }          
+}
 
 Tabuleiro.cliqueNoTabuleiro = function() {
     $(".posicao").click(function(){
         var posicao = $(this);
         Tabuleiro.iniciaMovimentoDaPeca($(this));
-        /*if(Estado.estadoDoJogo != 2){ 
-            if (Tabuleiro.movendoPeca($(this))) {
-                if (Tabuleiro.pecaClicada != undefined) {
-                    if (Estado.estadoDoJogo == 1 && (!$(this).hasClass("lago"))){
-                        Tabuleiro.movePecaClicadaPara(this);
-                        Tabuleiro.incluirPecaPosicionada(this);
-                    }else if(Estado.estadoDoJogo == 3){
-                       if(Tabuleiro.validaMovimento(this)){
-                            Tabuleiro.movePecaClicadaPara(this);
-                       }
-                    }
-                };
-            } 
-        }  */     
     });
 };
 
@@ -464,8 +436,6 @@ Tabuleiro.iniciaMovimentoDaPeca = function(posicao){
                 if (Tabuleiro.validaMovimento(posicao)){
                     var pecaClicada = Tabuleiro.pecaClicada;
                     var jogadorDaVez = Estado.partida.jogadorDaVez;
-                    //var jogadorDaVez = Estado.jogoAtual().jogador;
-                    //Estado.partida.jogadorDaVez = jogadorDaVez;
                     var jogada ={
                               idPecaClicada : $((pecaClicada).peca).attr("id"),
                               coordenada : coordenada,
@@ -474,15 +444,11 @@ Tabuleiro.iniciaMovimentoDaPeca = function(posicao){
                          }
                     if(Tabuleiro.isCombate){
                         var jogador = Estado.jogoAtual().jogador;
-
-//                        $("#nome-jogador-da-vez").html("Jogador da Vez: " + jogador);
                         jogada.jogadorDaVez = Estado.partida.jogadorDaVez;
                         Estado.enviaCombate(jogada);
                     }else{
                         Tabuleiro.movePecaClicadaPara(posicao);
                         Tabuleiro.incluirPecaPosicionada(posicao);
-                         //enviar a jogada para o servidor
-//                         $("#nome-jogador-da-vez").html("Jogador da Vez: " + jogada.jogadorDaVez);
                          Estado.enviaJogadaRealizada(jogada);
                      }
                 }                
@@ -529,14 +495,50 @@ Tabuleiro.trocaPecaMovimentada = function(jogada){
     for(var i=0; i<Estado.partida.listaDeJogos.length; i++){
         if(Estado.partida.listaDeJogos[i].jogador != jogada.jogadorDaVez){
             for(var j=0; j<Estado.partida.listaDeJogos[i].exercito.length; j++){
-                if(Estado.partida.listaDeJogos[j].exercito[i].id = jogada.idPecaClicada){
+                if(Estado.partida.listaDeJogos[i].exercito[j].id = jogada.idPecaClicada){
                     var posicao = Tabuleiro.posicaoPorCoordenadas(jogada.coordenada.linha, jogada.coordenada.coluna);
                     var peca = Tabuleiro.pecaPorId(jogada.idPecaClicada); 
-                    $(posicao).append(peca);//Estado.partida.listaDeJogos[j].exercito[i] = jogada.pecaMovimentada;
-//                    $("#nome-jogador-da-vez").html("Jogador da Vez: " + jogada.jogadorDaVez);
+                    $(posicao).append(peca);
                 }
-                ///continuar
             }
         }
      }
 };
+
+
+Tabuleiro.getIndiceDoJogadorLista = function(jogador){
+    for(var i=0; i < Estado.partida.jogadores.length; i++){
+        if(Estado.partida.jogadores[i] == jogador){
+            return i;
+        }
+    }
+} 
+
+Tabuleiro.exibirCombate = function(resultCombate){
+
+    var posicaoAtacada = Tabuleiro.posicaoPorCoordenadas(resultCombate.pecaAtacada.linha, resultCombate.pecaAtacada.coluna);
+    var posicaoEmMovimento = Tabuleiro.posicaoPorCoordenadas(resultCombate.pecaEmMovimento.linha, resultCombate.pecaEmMovimento.coluna);   
+    var indiceDoJogadorDaVez = Tabuleiro.getIndiceDoJogadorLista(resultCombate.jogadorDaVez); 
+
+    if (indiceDoJogadorDaVez == 1) {        
+        $(posicaoAtacada).children().addClass(resultCombate.pecaAtacada.patente + "_azul");
+        $(posicaoEmMovimento).children().addClass(resultCombate.pecaEmMovimento.patente + "_vermelho");
+    } else {
+        $(posicaoAtacada).children().addClass(resultCombate.pecaAtacada.patente + "_vermelho");
+        $(posicaoEmMovimento).children().addClass(resultCombate.pecaEmMovimento.patente + "_azul");    
+    }
+    setTimeout(function(){Tabuleiro.realizaAtaque(resultCombate)} , 2000);
+};
+
+Tabuleiro.zeraPartida = function(){
+    $("#tabuleiro").html("");
+    Tabuleiro.montarTabuleiro();
+    Jogo.gerarExercito(cor);
+    alert("Para jogar outra partida você deve logar novamente!");
+    setTimeout(function(){Tabuleiro.disconect()} , 2000);
+}; 
+
+Tabuleiro.disconect = function(){
+    Estado.disconect();
+}
+

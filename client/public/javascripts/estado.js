@@ -126,6 +126,10 @@ Estado.enviaJogadaRealizada = function(jogada){
 	Comunication.enviaJogada(jogada);
 }
 
+Estado.recebaJogada = function(jogada){
+	Tabuleiro.trocaPecaMovimentada(jogada);	
+}
+
 Estado.enviaCombate = function(jogada){
 	Comunication.enviaCombate(jogada);
 };
@@ -133,10 +137,17 @@ Estado.enviaCombate = function(jogada){
 Estado.exibirCombate = function(resultCombate){
 	Tabuleiro.exibirCombate(resultCombate);
 }
+Estado.limpaPartida = function(){
+	Comunication.limparPartida();
+};
 
-Estado.recebaJogada = function(jogada){
-	//var jogadoDaVez = jogada.jogadorDaVez;
-	//Estado.partida.jogadorDaVez = jogada.jogadorDaVez;
-	Tabuleiro.trocaPecaMovimentada(jogada);	
+Estado.zeraPartida = function(partida){
+	Estado.partida = partida;
+	Tabuleiro.zeraPartida(); 
+};
+
+Estado.disconect = function(){
+	Comunication.disconect();
 }
+
 

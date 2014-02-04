@@ -49,7 +49,7 @@ Jogo.desabilitaButaoPrepararJogo = function(){
 //Verifica se o exercito está completamente posicionado no tabuleiro
 Jogo.validaInicioDoJogo = function(){
 	var jogoAtual = Estado.jogoAtual();
-	if(jogoAtual.exercito.length == 10){
+	if(jogoAtual.exercito.length == 3){
 		return true;
 	}else{
 		alert("O tabuleiro ainda não está completo!");
@@ -82,26 +82,6 @@ Jogo.montaJogoNoClick = function() {
 		});		
 	});
 };
-
-/*Jogo.montaJogoNoClick = function() {
-	$("#preparar-jogo").click(function(){
-		var nome = $("#nomeJogador").val();
-		Estado.logaJogador(nome);
-		console.info(Estado.numeroDoJogador);
-		//if(Estado.numeroDoJogador ==1){
-		if(Estado.numeroDoJogador == undefined){
-			var cor = "vermelho";
-		}else{
-			var cor = "azul";
-		}
-		Tabuleiro.montarTabuleiro();
-		Jogo.gerarExercito(cor);
-		Tabuleiro.cliqueDaPeca();
-	    Tabuleiro.cliqueNoTabuleiro();
-			
-	});
-	//$("#preparar-jogo").attr("disabled", true); aonde é?
-};*/
 
 Jogo.mostraJogadoresOnline = function(jogadores) {
 	$("#lista").html("");

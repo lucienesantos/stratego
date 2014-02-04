@@ -9,10 +9,6 @@ Comunication.socket.on('connect', function() {
   console.log('conectei');
 });
 
-Comunication.logaJogador = function(nomeJogador) {
-  Comunication.socket.emit('login', nomeJogador);
-};
-
 Comunication.socket.on('loginSuccess', function(partida) {  
   Estado.atualizaJogo(partida);
 });
@@ -41,7 +37,10 @@ Comunication.socket.on("chat", function(data){
 
 Comunication.socket.on("jogadorDaVez", function(jogador){
 	Estado.atualizaJogadorDaVez(jogador);
-	//Estado.partida.jogadorDaVez = jogador;
+});
+
+Comunication.socket.on("zeraPartida", function(partida){
+	Estado.zeraPartida(partida);
 });
 
 Comunication.sendMessage = function(message) {
@@ -50,6 +49,10 @@ Comunication.sendMessage = function(message) {
 		message: message
 	};
 	Comunication.socket.emit("message", chat);
+};
+
+Comunication.logaJogador = function(nomeJogador) {
+  Comunication.socket.emit('login', nomeJogador);
 };
 
 Comunication.informarJogoPronto = function(jogo){
@@ -64,3 +67,10 @@ Comunication.enviaCombate = function(jogada){
   Comunication.socket.emit("enviaCombate", jogada);
 };
 
+Comunication.limparPartida = function(){
+	Comunication.socket.emit("limpaPartida");	
+};
+
+Comunication.disconect = function (){
+	Comunication.socket.emit("disconnect");
+}
