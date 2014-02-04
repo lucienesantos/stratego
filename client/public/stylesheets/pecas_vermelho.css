@@ -1,0 +1,189 @@
+.soldado_vermelho {
+	background-color: #C01C1C;
+	background-image: url(../images/pecas/soldado.png);
+	overflow: hidden;
+}
+
+.cabo-armeiro_vermelho {
+	background-color: #C01C1C;
+	background-image: url(../images/pecas/armeiro.png);
+	overflow: hidden;
+}
+
+.capitao_vermelho {
+	background-color: #C01C1C;
+	background-image: url(../images/pecas/capitao.png);
+	overflow: hidden;
+}
+
+.coronel_vermelho {
+	background-color: #C01C1C;
+	background-image: url(../images/pecas/coronel.png);
+	overflow: hidden;
+}
+
+.espiao_vermelho {
+	background-color: #C01C1C;
+	background-image: url(../images/pecas/espian.png);
+	overflow: hidden;
+}
+
+.general_vermelho {
+	background-color: #C01C1C;
+	background-image: url(../images/pecas/general.png);
+	overflow: hidden;
+}
+
+.major_vermelho {
+	background-color: #C01C1C;
+	background-image: url(../images/pecas/major.png);
+	overflow: hidden;
+}
+
+.marechal_vermelho {
+	background-color: #C01C1C;
+	background-image: url(../images/pecas/marechal.png);
+	overflow: hidden;
+}
+
+.sargento_vermelho {
+	background-color: #C01C1C;
+	background-image: url(../images/pecas/sargento.png);
+	overflow: hidden;
+}
+
+.tenente_vermelho {
+	background-color: #C01C1C;
+	background-image: url(../images/pecas/tenente.png);
+	overflow: hidden;
+}
+
+.bandeira_vermelho {
+	background-color: #C01C1C;
+	background-image: url(../images/pecas/bandeira.png);
+	overflow: hidden;
+}
+
+.bomba_vermelho {
+	background-color: #C01C1C;
+	background-image: url(../images/pecas/bomba.png);
+	overflow: hidden;
+}
+
+.bandeira_vermelho:after {
+	content: ' F';
+	color: #FAFAFA;
+	height: 20px;
+	font-size: 25px;
+	font-weight: bold;
+	position: relative;
+	padding-right: 58px;
+}
+
+.bomba_vermelho:after {
+	content: ' B';
+	color: #FAFAFA;
+	height: 20px;
+	font-size: 25px;
+	font-weight: bold;
+	position: relative;
+	padding-right: 58px;
+}
+
+.espiao_vermelho:after {
+	content: ' 0';
+	color: #FAFAFA;
+	height: 20px;
+	font-size: 25px;
+	font-weight: bold;
+	position: relative;
+	padding-right: 58px;
+}
+
+.soldado_vermelho:after {
+	content: ' 1';
+	color: #FAFAFA;
+	height: 20px;
+	font-size: 25px;
+	font-weight: bold;
+	position: relative;
+	padding-right: 58px;
+}
+
+.cabo-armeiro_vermelho:after {
+	content: ' 2';
+	color: #FAFAFA;
+	height: 20px;
+	font-size: 25px;
+	font-weight: bold;
+	position: relative;
+	padding-right: 58px;
+}
+.sargento_vermelho:after {
+	content: ' 3';
+	color: #FAFAFA;
+	height: 20px;
+	font-size: 25px;
+	font-weight: bold;
+	position: relative;
+	padding-right: 58px;
+}
+
+.tenente_vermelho:after {
+	content: ' 4';
+	color: #FAFAFA;
+	height: 20px;
+	font-size: 25px;
+	font-weight: bold;
+	position: relative;
+	padding-right: 58px;
+}
+
+.capitao_vermelho:after {
+	content: ' 5';
+	color: #FAFAFA;
+	height: 20px;
+	font-size: 25px;
+	font-weight: bold;
+	position: relative;
+	padding-right: 58px;
+}
+
+.major_vermelho:after {
+	content: ' 6';
+	color: #FAFAFA;
+	height: 20px;
+	font-size: 25px;
+	font-weight: bold;
+	position: relative;
+	padding-right: 58px;
+}
+
+.coronel_vermelho:after {
+	content: ' 7';
+	color: #FAFAFA;
+	height: 20px;
+	font-size: 25px;
+	font-weight: bold;
+	position: relative;
+	padding-right: 58px;
+}
+.general_vermelho:after {
+	content: ' 8';
+	color: #FAFAFA;
+	height: 20px;
+	font-size: 25px;
+	font-weight: bold;
+	position: relative;
+	padding-right: 58px;
+}
+
+.marechal_vermelho:after {
+	content: ' 9';
+	color: #FAFAFA;
+	height: 20px;
+	font-size: 25px;
+	font-weight: bold;
+	position: relative;
+	padding-right: 58px;
+}
