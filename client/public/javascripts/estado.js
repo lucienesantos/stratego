@@ -71,6 +71,10 @@ Estado.atualizaJogadores = function() {
 	
 };
 
+Estado.loginJaCadastrado = function(data){
+	alert(data);
+};
+
 Estado.falhaNoLogin = function(data) {
 	alert(data);
 };
@@ -82,7 +86,7 @@ Estado.atualizaConfiguracoes = function(jogoAtual) {
 	}
 };
 
-Estado.procuraPeca = function(id, jogoAtual) {
+Estado.procuraIndicePeca = function(id, jogoAtual) {
 	for (var i = 0; i < jogoAtual.exercito.length; i++)	{
 		if (id == jogoAtual.exercito[i].id) {
 			return i;
@@ -90,10 +94,22 @@ Estado.procuraPeca = function(id, jogoAtual) {
 	}
 };
 
+  
+ Estado.procuraPeca = function(id, jogoAtual) {
+    for (var i = 0; i < jogoAtual.exercito.length; i++) {
+        if (id == jogoAtual.exercito[i].id) {
+            return jogoAtual.exercito[i]
+        }
+    }
+};
+
+
 Estado.adicionaPecaNoExercito = function(peca) {
 	var jogoAtual = Estado.jogoAtual();
-	var pecaEncontrada = Estado.procuraPeca(peca.id, jogoAtual);	
+	var pecaEncontrada = Estado.procuraIndicePeca(peca.id, jogoAtual);
 	if (pecaEncontrada != undefined) {    	//Verifica se a peça ja está adicionada no exercito se tiver apenas atualiza a peça
+		peca.posicaoAnterior = jogoAtual.exercito[pecaEncontrada].posicaoAnterior;
+		peca.quantidadeJogadasRepetidas = jogoAtual.exercito[pecaEncontrada].quantidadeJogadasRepetidas;
 		jogoAtual.exercito[pecaEncontrada] = peca;
 	} else {
 		jogoAtual.exercito.push(peca);

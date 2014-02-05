@@ -81,7 +81,7 @@ body {
 }
 .lago{   
     display: inline-block;
-	background-color: #349DD1;
+	background-color: #349DD1 !important;
 
 }
 .linha {
@@ -112,7 +112,12 @@ body {
 	background-color: #fa2a52;	
 }
 .jogador_da_vez{
-   color: #fd0a39;
+ 	color: #fafafa;
+	font-size: 18px;
+	position: absolute;
+	right: 15px;
+	top: 12px;
+	display: block;
 }
 
 .navbar-brand {
@@ -220,5 +225,8 @@ body {
 }
 
 .tabuleiro_opaco{
-	color: #b7d6e4;
+	background-color: #CACACA;
+	-webkit-box-shadow: inset 6px 1px 52px 0px rgba(145,145,145,1);
+	-moz-box-shadow: inset 6px 1px 52px 0px rgba(145,145,145,1);
+	box-shadow: inset 6px 1px 52px 0px rgba(145,145,145,1);
 }

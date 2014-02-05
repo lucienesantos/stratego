@@ -13,6 +13,10 @@ Comunication.socket.on('loginSuccess', function(partida) {
   Estado.atualizaJogo(partida);
 });
 
+Comunication.socket.on('loginJaCadastrado', function(data) {  
+  Estado.loginJaCadastrado(data);
+});
+
 Comunication.socket.on('loginFalha', function(data) {
   Estado.falhaNoLogin(data);
 });

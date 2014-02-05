@@ -301,9 +301,9 @@ Servidor.realizaCombate = function(combate){ //Exclui a bandeira da partida
 	     			Servidor.excluiPecaDaPartida(combate.valorPecaAtacada); //Exclui o marechal da partida
 	     		}
 	     		else if(parseInt(valorPecaAtacada) == 0){
-	     			resultCombate.vencedorDaJogada = ""; 
-	    			Servidor.excluiPecaDaPartida(combate.pecaAtacada);
-	    			Servidor.excluiPecaDaPartida(combate.pecaEmMovimento);
+	     				resultCombate.vencedorDaJogada = ""; 
+	    				Servidor.excluiPecaDaPartida(combate.pecaAtacada);
+	    				Servidor.excluiPecaDaPartida(combate.pecaEmMovimento);
 	     		}
 	     		else{
 	     			resultCombate.vencedorDaJogada = jogadorQueAtacou;
@@ -348,29 +348,56 @@ io.sockets.on('connection', function(socket) {
 	});
 
 	socket.on('login', function(nomeJogador){
-		var quantidadeJogadores =Servidor.partida.jogadores.length;
+		var quantidadeJogadores = Servidor.partida.jogadores.length;
 		if (quantidadeJogadores < 2) {
-			var jogo = {
-				estado: EstadosDoJogo.PREPARANDO, // Ao clicar no botÃO "Preparar Jogo" o estado do jogo, deste usuario, deve ser setado para "PREPARANDO" 
-				jogador: nomeJogador,
-				exercito: []
-			};
-			var socketAuxiliar = {
-				socket: socket,
-				jogador: nomeJogador
-			}
-			
-			socketsDeJogadores.push(socketAuxiliar);
-			if(quantidadeJogadores == 0){
-				Servidor.partida.jogadorDaVez = nomeJogador;
-			}
+			if(quantidadeJogadores == 1){
+				if(Servidor.partida.jogadores[0] == nomeJogador){
+					io.sockets.emit('loginJaCadastrado', 'Já existe jogador com esse nome!');
+				}else{
+					var jogo = {
+					estado: EstadosDoJogo.PREPARANDO, // Ao clicar no botÃO "Preparar Jogo" o estado do jogo, deste usuario, deve ser setado para "PREPARANDO" 
+					jogador: nomeJogador,
+					exercito: []
+				};
+				var socketAuxiliar = {
+					socket: socket,
+					jogador: nomeJogador
+				}
+				
+				socketsDeJogadores.push(socketAuxiliar);
+				if(quantidadeJogadores == 0){
+					Servidor.partida.jogadorDaVez = nomeJogador;
+				}
 
-			Servidor.partida.listaDeJogos.push(jogo);
-			Servidor.partida.jogadores.push(nomeJogador);
-			socket.emit('loginSuccess', Servidor.partida); // Responde ao usuario se conseguiu logar com sucesso
+				Servidor.partida.listaDeJogos.push(jogo);
+				Servidor.partida.jogadores.push(nomeJogador);
+				socket.emit('loginSuccess', Servidor.partida);
+				
+				}
+		    }else{
+
+				var jogo = {
+					estado: EstadosDoJogo.PREPARANDO, // Ao clicar no botÃO "Preparar Jogo" o estado do jogo, deste usuario, deve ser setado para "PREPARANDO" 
+					jogador: nomeJogador,
+					exercito: []
+				};
+				var socketAuxiliar = {
+					socket: socket,
+					jogador: nomeJogador
+				}
+				
+				socketsDeJogadores.push(socketAuxiliar);
+				if(quantidadeJogadores == 0){
+					Servidor.partida.jogadorDaVez = nomeJogador;
+				}
+
+				Servidor.partida.listaDeJogos.push(jogo);
+				Servidor.partida.jogadores.push(nomeJogador);
+				socket.emit('loginSuccess', Servidor.partida); // Responde ao usuario se conseguiu logar com sucesso
+		   }		
 		} else {			
 			io.sockets.emit('loginFalha', 'Jogadores completos! aguarde sua vez.'); //caso contrario
-		}		
+		}
 	});
 
 	socket.on("informarJogoPronto", function(jogo){
@@ -410,7 +437,7 @@ io.sockets.on('connection', function(socket) {
 	});
 	
    	socket.on('disconnect', function() {
-   		io.sockets.disconnect();
+   		
 	   
   });
 });

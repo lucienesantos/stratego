@@ -306,7 +306,7 @@ Tabuleiro.desabilitaTabuleiroAdversario = function(){
         }
     }
     else if(Estado.numeroDoJogador == 2){
-        for(var linha = 1; linha < 5; linha++){
+        for(var linha = 1; linha < 7; linha++){
             for(var coluna = 1; coluna < 11; coluna++){
                 var posicao = Tabuleiro.posicaoPorCoordenadas(linha, coluna);
                 $(posicao).addClass("tabuleiro_opaco");
@@ -323,8 +323,7 @@ Tabuleiro.cliqueDaPeca = function() {
             alert("Peça imóvel");
         }
         else{
-            if(jogoAtual.estado == EstadosDoJogo.PREPARANDO){
-                Tabuleiro.desabilitaTabuleiroAdversario();
+            if(jogoAtual.estado == EstadosDoJogo.PREPARANDO){                
                 Tabuleiro.pecaClicada = {
                  peca: $(this)
                 };
@@ -350,13 +349,67 @@ Tabuleiro.cliqueDaPeca = function() {
     });
 }
 
+
 Tabuleiro.movePecaClicadaPara = function(destino) {
 
-    Tabuleiro.pecaClicada.peca.linha = destino.linha;
-    Tabuleiro.pecaClicada.peca.coluna = destino.coluna;
-    $(destino).append(Tabuleiro.pecaClicada.peca);
-    $(".posicao").removeClass("opcaoDeMovimento");
-    Tabuleiro.pecaClicada = undefined;
+    if(Estado.jogoAtual().estado == EstadosDoJogo.PREPARANDO){
+        
+        Tabuleiro.pecaClicada.peca.linha = destino.linha;
+        Tabuleiro.pecaClicada.peca.coluna = destino.coluna; 
+        $(destino).append(Tabuleiro.pecaClicada.peca);
+        $(".posicao").removeClass("opcaoDeMovimento");
+        Tabuleiro.pecaClicada = undefined;
+    }
+    else{
+
+        var indice = Estado.procuraIndicePeca($(Tabuleiro.pecaClicada.peca).attr("id"), Estado.jogoAtual());
+        var peca = Estado.procuraPeca($(Tabuleiro.pecaClicada.peca).attr("id"), Estado.jogoAtual());
+
+        if((peca.posicaoAnterior.linha == "") && (peca.posicaoAnterior.coluna == "")){
+            
+            peca.posicaoAnterior.linha = $(Tabuleiro.pecaClicada.peca).parent().attr("data-row");
+            peca.posicaoAnterior.coluna = $(Tabuleiro.pecaClicada.peca).parent().attr("data-column");
+            
+            Tabuleiro.pecaClicada.peca.linha = $(destino).attr("data-row");
+            Tabuleiro.pecaClicada.peca.coluna = $(destino).attr("data-column"); 
+            $(destino).append(Tabuleiro.pecaClicada.peca);
+            $(".posicao").removeClass("opcaoDeMovimento");
+            Tabuleiro.pecaClicada = undefined;
+        
+        }else{
+            
+            if((peca.posicaoAnterior.linha == $(destino).attr("data-row")) && (peca.posicaoAnterior.coluna == $(destino).attr("data-column"))){
+                
+                peca.quantidadeJogadasRepetidas++;
+                peca.posicaoAnterior.linha = $(Tabuleiro.pecaClicada.peca).parent().attr("data-row");
+                peca.posicaoAnterior.coluna = $(Tabuleiro.pecaClicada.peca).parent().attr("data-column");
+                
+                if(peca.quantidadeJogadasRepetidas >= 6){
+                    peca.quantidadeJogadasRepetidas--;
+                    alert("Não pode se mover mais de 5 vezes entre 2 mesmas casas!");
+                    return false;
+                }
+                else{
+                   Tabuleiro.pecaClicada.peca.linha = $(destino).attr("data-row");
+                   Tabuleiro.pecaClicada.peca.coluna = $(destino).attr("data-column"); 
+                   $(destino).append(Tabuleiro.pecaClicada.peca);
+                   $(".posicao").removeClass("opcaoDeMovimento");
+                   Tabuleiro.pecaClicada = undefined; 
+                }
+            }else{
+                   Tabuleiro.pecaClicada.peca.linha = $(destino).attr("data-row");
+                   Tabuleiro.pecaClicada.peca.coluna = $(destino).attr("data-column"); 
+                   $(destino).append(Tabuleiro.pecaClicada.peca);
+                   $(".posicao").removeClass("opcaoDeMovimento");
+                   Tabuleiro.pecaClicada = undefined; 
+                peca.quantidadeJogadasRepetidas = 0;
+            }
+
+        }
+        Estado.jogoAtual().exercito[indice] = peca;
+        $(".posicao").removeClass("opcaoDeMovimento");  
+    }  
+    return true;  
 };
 
 Tabuleiro.movendoPeca = function(objeto) {
@@ -429,6 +482,10 @@ Tabuleiro.cliqueNoTabuleiro = function() {
 
 Tabuleiro.incluirPecaPosicionada = function(pecaPosicionada){
     var pecaDoJogo = $(pecaPosicionada).children();
+    var posicaoAnterior = {
+        linha: "",
+        coluna: ""
+    }
 
     var peca = {
         id: $(pecaDoJogo).attr("id"),
@@ -436,7 +493,9 @@ Tabuleiro.incluirPecaPosicionada = function(pecaPosicionada){
         coluna: parseInt($(pecaPosicionada).attr("data-column")),
         patente: $(pecaDoJogo).attr("data-patente"),
         valor: $(pecaDoJogo).attr("valor"),
-        isMovel: (!$(pecaDoJogo).hasClass("imovel"))
+        isMovel: (!$(pecaDoJogo).hasClass("imovel")),
+        posicaoAnterior: posicaoAnterior, 
+        quantidadeJogadasRepetidas: 0,
     }
     Estado.adicionaPecaNoExercito(peca);
 }
@@ -446,7 +505,8 @@ Tabuleiro.eMesmaPosicao = function(coordenada) {
     var colunaClicada = $(Tabuleiro.pecaClicada.peca).parent().attr("data-column");
     return linhaClicada == coordenada.linha && colunaClicada == coordenada.coluna;
 };
- 
+
+
 Tabuleiro.iniciaMovimentoDaPeca = function(posicao){
     var coordenada = {
         linha: parseInt($(posicao).attr("data-row")),
@@ -456,8 +516,9 @@ Tabuleiro.iniciaMovimentoDaPeca = function(posicao){
         if(Estado.estadoDoJogo() == EstadosDoJogo.PREPARANDO){
             //Restringindo area para cada jogador posicionar seu exercito
             if((Estado.numeroDoJogador == 1 && coordenada.linha <= 4) || (Estado.numeroDoJogador == 2 && coordenada.linha >= 7)){
-                Tabuleiro.movePecaClicadaPara(posicao);
-                Tabuleiro.incluirPecaPosicionada(posicao);
+                
+                if(Tabuleiro.movePecaClicadaPara(posicao))
+                   Tabuleiro.incluirPecaPosicionada(posicao);
             }
         //Todas as validaçoes serão feitas akiiiiiiiiiiiiiiiiiiiii    
         }else{
@@ -476,9 +537,10 @@ Tabuleiro.iniciaMovimentoDaPeca = function(posicao){
                         jogada.jogadorDaVez = Estado.partida.jogadorDaVez;
                         Estado.enviaCombate(jogada);
                     }else{
-                        Tabuleiro.movePecaClicadaPara(posicao);
-                        Tabuleiro.incluirPecaPosicionada(posicao);
-                         Estado.enviaJogadaRealizada(jogada);
+                        if(Tabuleiro.movePecaClicadaPara(posicao)){
+                            Tabuleiro.incluirPecaPosicionada(posicao);
+                            Estado.enviaJogadaRealizada(jogada);
+                        }    
                      }
                 }                
             }            
@@ -487,6 +549,7 @@ Tabuleiro.iniciaMovimentoDaPeca = function(posicao){
 }
 
 Tabuleiro.desenhaJogoAdversario = function (jogoAdversario){
+    $(".posicao").removeClass("tabuleiro_opaco");
     var listaPosicoesAdversario = jogoAdversario;
     for(var i = 0; i < jogoAdversario.exercito.length; i++){
         var peca = jogoAdversario.exercito[i];
@@ -526,7 +589,7 @@ Tabuleiro.trocaPecaMovimentada = function(jogada){
     for(var i=0; i<Estado.partida.listaDeJogos.length; i++){
         if(Estado.partida.listaDeJogos[i].jogador != jogada.jogadorDaVez){
             for(var j=0; j<Estado.partida.listaDeJogos[i].exercito.length; j++){
-                if(Estado.partida.listaDeJogos[i].exercito[j].id = jogada.idPecaClicada){
+                if(Estado.partida.listaDeJogos[i].exercito[j].id == jogada.idPecaClicada){
                     var posicao = Tabuleiro.posicaoPorCoordenadas(jogada.coordenada.linha, jogada.coordenada.coluna);
                     var peca = Tabuleiro.pecaPorId(jogada.idPecaClicada); 
                     $(posicao).append(peca);
