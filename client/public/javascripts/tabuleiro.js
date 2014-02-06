@@ -119,6 +119,12 @@ Tabuleiro.calculaPosicoesDoSoldado = function(linha, coluna){
     var posicaoLinhaAcima = {linha: linha - 1, coluna: coluna};
     var posicaoLinhaAbaixo = {linha: linha + 1, coluna: coluna};
 
+    /*Dadas a linha e a coluna do soldado, verifica-se quais as posições 
+    * são opçoes de movimento para ele.Lembrando que:
+    * Ataca: só ataca se o adversario estiver imediantamente do lado (1 dos 4) 
+    * Corre: enquanto as posições seguintes não estiverem ocupadas
+    * A verificação é feita para os 4 lados da peca
+    */
     for(var i = colunaDaPeca -1; i > 0; i--){
         var posicao = {linha: linhaDaPeca, coluna: i};
         if (Tabuleiro.naoELago(posicao)){
@@ -231,7 +237,6 @@ Tabuleiro.calculaOpcoesDeMovimento = function(linha, coluna) {
         var opcoes = Tabuleiro.calculaPosicoesDoSoldado(linha, coluna);
         return opcoes;
     } 
-
     var posicaoColunaEsquerda = {linha: linha, coluna: coluna - 1};
     var posicaoColunaDireita = {linha: linha, coluna: coluna + 1};
     var posicaoLinhaAcima = {linha: linha - 1, coluna: coluna};
@@ -350,7 +355,6 @@ Tabuleiro.cliqueDaPeca = function() {
     });
 }
 
-
 Tabuleiro.movePecaClicadaPara = function(destino) {
 
     var peca = Estado.procuraPeca($(Tabuleiro.pecaClicada.peca).attr("id"), Estado.jogoAtual());
@@ -361,9 +365,7 @@ Tabuleiro.movePecaClicadaPara = function(destino) {
         Tabuleiro.pecaClicada.peca.linha = destino.linha;
         Tabuleiro.pecaClicada.peca.coluna = destino.coluna; 
         $(destino).append(Tabuleiro.pecaClicada.peca);
-        
         Estado.jogoAtual().exercito[indice] = peca;
-        //Tabuleiro.pecaClicada = undefined;
     }
     else{
 
@@ -371,22 +373,18 @@ Tabuleiro.movePecaClicadaPara = function(destino) {
             
             peca.posicaoAnterior.linha = $(Tabuleiro.pecaClicada.peca).parent().attr("data-row");
             peca.posicaoAnterior.coluna = $(Tabuleiro.pecaClicada.peca).parent().attr("data-column");
-            
             Tabuleiro.pecaClicada.peca.linha = $(destino).attr("data-row");
             Tabuleiro.pecaClicada.peca.coluna = $(destino).attr("data-column"); 
             $(destino).append(Tabuleiro.pecaClicada.peca);
-
             Estado.jogoAtual().exercito[indice] = peca;
             $(".posicao").removeClass("opcaoDeMovimento");
             Tabuleiro.pecaClicada = undefined;
-        
         }else{
-           if((peca.posicaoAnterior.linha == $(destino).attr("data-row")) && (peca.posicaoAnterior.coluna == $(destino).attr("data-column"))){
+            if((peca.posicaoAnterior.linha == $(destino).attr("data-row")) && (peca.posicaoAnterior.coluna == $(destino).attr("data-column"))){
                 
                 peca.quantidadeJogadasRepetidas++;
                 peca.posicaoAnterior.linha = $(Tabuleiro.pecaClicada.peca).parent().attr("data-row");
                 peca.posicaoAnterior.coluna = $(Tabuleiro.pecaClicada.peca).parent().attr("data-column");
-                
                 if(peca.quantidadeJogadasRepetidas >= 6){
                     peca.quantidadeJogadasRepetidas--;
                     alert("Não pode se mover mais de 5 vezes entre 2 mesmas casas!");
@@ -397,20 +395,18 @@ Tabuleiro.movePecaClicadaPara = function(destino) {
                    Tabuleiro.pecaClicada.peca.linha = $(destino).attr("data-row");
                    Tabuleiro.pecaClicada.peca.coluna = $(destino).attr("data-column"); 
                    $(destino).append(Tabuleiro.pecaClicada.peca);
-                  
                    Estado.jogoAtual().exercito[indice] = peca;
                    $(".posicao").removeClass("opcaoDeMovimento");
                    Tabuleiro.pecaClicada = undefined; 
                 }
             }else{
-                   Tabuleiro.pecaClicada.peca.linha = $(destino).attr("data-row");
-                   Tabuleiro.pecaClicada.peca.coluna = $(destino).attr("data-column"); 
-                   $(destino).append(Tabuleiro.pecaClicada.peca);
-                   peca.quantidadeJogadasRepetidas = 0;
-                   
-                   Estado.jogoAtual().exercito[indice] = peca;
-                   $(".posicao").removeClass("opcaoDeMovimento");
-                   Tabuleiro.pecaClicada = undefined; 
+               Tabuleiro.pecaClicada.peca.linha = $(destino).attr("data-row");
+               Tabuleiro.pecaClicada.peca.coluna = $(destino).attr("data-column"); 
+               $(destino).append(Tabuleiro.pecaClicada.peca);
+               peca.quantidadeJogadasRepetidas = 0;
+               Estado.jogoAtual().exercito[indice] = peca;
+               $(".posicao").removeClass("opcaoDeMovimento");
+               Tabuleiro.pecaClicada = undefined; 
             }
         }
      }    
@@ -438,7 +434,6 @@ Tabuleiro.validaMovimento = function(destino){
 Tabuleiro.realizaAtaque = function(resultCombate){
     var posicaoAtacada = Tabuleiro.posicaoPorCoordenadas(resultCombate.pecaAtacada.linha, resultCombate.pecaAtacada.coluna);
     var pecaAtacada = Tabuleiro.pecaPorId(resultCombate.pecaAtacada.id);
-    
     var pecaEmMovimento = Tabuleiro.pecaPorId(resultCombate.pecaEmMovimento.id);
     
     if ($(pecaAtacada).hasClass("inimigo")){
@@ -450,10 +445,8 @@ Tabuleiro.realizaAtaque = function(resultCombate){
         $(pecaEmMovimento).removeClass(resultCombate.pecaEmMovimento.patente + "_" + cor);
     }
     if(resultCombate.movimentaPeca){
-
         $(pecaAtacada).remove();
         $(posicaoAtacada).append(pecaEmMovimento);
-       
     }else {
         if(resultCombate.vencedorDaJogada == ""){
             $(pecaEmMovimento).remove();
@@ -461,15 +454,15 @@ Tabuleiro.realizaAtaque = function(resultCombate){
         }
       $(pecaEmMovimento).remove();
     }
-      $(".posicao").removeClass("opcaoDeMovimento");
+    $(".posicao").removeClass("opcaoDeMovimento");
     if(resultCombate.isEmpate){
         alert("Partida encerrada: jogo empatado!");
         Estado.limpaPartida();
-    } else{
+    }else{
         if((!resultCombate.isEmpate) && (resultCombate.vencedorDaPartida != "")){
-        alert("Vitória de " + resultCombate.vencedorDaPartida);
-        Estado.limpaPartida();
-    }
+            alert("Vitória de " + resultCombate.vencedorDaPartida);
+            Estado.limpaPartida();
+        }
     }          
 }
 
@@ -497,7 +490,6 @@ Tabuleiro.incluirPecaPosicionada = function(pecaPosicionada){
         linha: "",
         coluna: ""
     }
-
     var peca = {
         id: $(pecaDoJogo).attr("id"),
         linha: parseInt($(pecaPosicionada).attr("data-row")),
@@ -516,7 +508,6 @@ Tabuleiro.eMesmaPosicao = function(coordenada) {
     var colunaClicada = $(Tabuleiro.pecaClicada.peca).parent().attr("data-column");
     return (linhaClicada == coordenada.linha) && (colunaClicada == coordenada.coluna);
 };
-
 
 Tabuleiro.iniciaMovimentoDaPeca = function(posicao){
     var coordenada = {
@@ -538,7 +529,7 @@ Tabuleiro.iniciaMovimentoDaPeca = function(posicao){
                     jogadorDaVez : jogadorDaVez,
                     isCombate: Tabuleiro.isCombate
             }
-            if ( !Tabuleiro.eMesmaPosicao(coordenada) ) {
+            if( !Tabuleiro.eMesmaPosicao(coordenada) ) {
                 if (Tabuleiro.validaMovimento(posicao)){
                     jogada.isCombate = Tabuleiro.isCombate;
                     if(Tabuleiro.isCombate){
@@ -579,7 +570,6 @@ Tabuleiro.desenhaJogoAdversario = function (jogoAdversario){
         }        
         $(posicao).append(soldado);
      }
-//    $("#nome-jogador-da-vez").html("Jogador da Vez: " + Estado.partida.jogadorDaVez);
 }
 
 Tabuleiro.pecaClicadaImovel = function(peca){
@@ -607,7 +597,6 @@ Tabuleiro.trocaPecaMovimentada = function(jogada){
         }
      }
 };
-
 
 Tabuleiro.getIndiceDoJogadorLista = function(jogador){
     for(var i=0; i < Estado.partida.jogadores.length; i++){
@@ -638,10 +627,7 @@ Tabuleiro.zeraPartida = function(){
     Tabuleiro.montarTabuleiro();
     Jogo.gerarExercito(cor);
     alert("Para jogar outra partida você deve logar novamente!");
-    
+    setTimeout(function(){Tabuleiro.disconect()} , 2000);
 }; 
 
-Tabuleiro.disconect = function(){
-    Estado.disconect();
-}
 

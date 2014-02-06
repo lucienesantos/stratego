@@ -43,6 +43,7 @@ var EstadosDaPartida = {
 	INICIADA: 3,
 	ENCERRADA_BRUSCAMENTE: 9
 }
+
 var EstadosDoJogo = {
 	PREPARANDO: 1,
 	PRONTO_PARA_INICIAR: 2,
@@ -61,51 +62,54 @@ Servidor.recarregaPartida = function(jogada){
 			}
 		}
 	}
-	//Servidor.partida.jogadorDaVez = jogada.jogadorDaVez;
 }	
 
 Servidor.recuperaSocketPorJogador = function(jogador){
 	for(var i=0; i<socketsDeJogadores.length; i++){
-	      if(socketsDeJogadores[i].jogador == jogador){
-	      	  return socketsDeJogadores[i].socket;
-	      }
+        if(socketsDeJogadores[i].jogador == jogador){
+      	  return socketsDeJogadores[i].socket;
+        } 
 	}
 }
 
+/*Para cada jogador é necessário mascarar as patentes dos soldados para 
+  enviar o exercito para o jogador adversário
+*/
 Servidor.enviaPartidasInicial = function (){
 	Servidor.criarPartidasTemporarias();
 	var socket;
-	for(var i=0; i<Servidor.partida.jogadores.length; i++){		//recupera o socket de cada jogador e envia a respectiva partida
+	for(var i=0; i<Servidor.partida.jogadores.length; i++){		
 		socket = Servidor.recuperaSocketPorJogador(Servidor.partida.jogadores[i]);
 		if(i == 0){
 			socket.emit("partidaProntaParaIniciar", Servidor.partidaTemporaria_1);
 		}else if(i == 1){
 			socket.emit("partidaProntaParaIniciar", Servidor.partidaTemporaria_2);
 		}
-		
 	}
 }
 
-//Para cada jogador é necessário mascarar as patentes dos soldados para enviar o exercito para o jogador adversário
+/*Para cada jogador é necessário mascarar as patentes dos soldados para 
+  enviar o exercito para o jogador adversário
+*/
 Servidor.inibePatentesDoExercito = function(partidaTemporaria, indiceDoJogoAdversario){
-      for(var i=0; i < partidaTemporaria.listaDeJogos[indiceDoJogoAdversario].exercito.length; i++){
-      	   delete partidaTemporaria.listaDeJogos[indiceDoJogoAdversario].exercito[i]["patente"];
-      	   ///substitue image por imagem padrao
-      }
-      if(indiceDoJogoAdversario == 0){
+    for(var i=0; i < partidaTemporaria.listaDeJogos[indiceDoJogoAdversario].exercito.length; i++){
+      	delete partidaTemporaria.listaDeJogos[indiceDoJogoAdversario].exercito[i]["patente"];
+    }
+    if(indiceDoJogoAdversario == 0){
       	Servidor.partidaTemporaria_2 = partidaTemporaria;
-      }else if(indiceDoJogoAdversario == 1){
-		Servidor.partidaTemporaria_1 = partidaTemporaria; //Alterou a partidaTemporaria_1
-      }
+    }else if(indiceDoJogoAdversario == 1){
+		Servidor.partidaTemporaria_1 = partidaTemporaria; 
+    }
 }
 
 Servidor.criarPartidasTemporarias = function(){
-	Servidor.partidaTemporaria_1 = JSON.parse(JSON.stringify(Servidor.partida));  //partida que será enviada para o jogador 1
-	Servidor.partidaTemporaria_2 = JSON.parse(JSON.stringify(Servidor.partida));	 //partida que será enviada para o jogador 2
+	Servidor.partidaTemporaria_1 = JSON.parse(JSON.stringify(Servidor.partida)); 
+	Servidor.partidaTemporaria_2 = JSON.parse(JSON.stringify(Servidor.partida));
 	Servidor.inibePatentesDoExercito(Servidor.partidaTemporaria_1, 1);
 	Servidor.inibePatentesDoExercito(Servidor.partidaTemporaria_2, 0)
- }
+}
 
+/*Verifica quantos jogadores montaram o tabuleiro*/
 Servidor.quantidadeJogosProntos = function(){
 	var jogosProntos = 0;
 	for(var i=0; i<Servidor.partida.listaDeJogos.length; i++){
@@ -116,7 +120,9 @@ Servidor.quantidadeJogosProntos = function(){
 	return jogosProntos;
 }
 
-//Verifica se ja existe um jogo cadastrado para esse jogador na lista.
+/*Verifica se ja existe um jogo cadastrado para esse jogador na 
+  lista de jogos da partida.
+*/
 Servidor.procuraJogoNalista = function(jogo) {
 	for(var i=0; i<Servidor.partida.listaDeJogos.length; i++){
 		if (jogo.jogador == Servidor.partida.listaDeJogos[i].jogador) {
@@ -145,11 +151,9 @@ Servidor.atualizaPartida = function(jogo){
 	}else if(Servidor.quantidadeJogosProntos() == 2){
 		Servidor.partida.estado = EstadosDaPartida.PRONTA_PARA_INICIAR;
 	}
-	
 }
 
 Servidor.getIndiceDoJogoNaListaPorJogador = function(jogador){
-	// após corrigir "disconnect" retirar if
 	if(jogador != undefined && Servidor.partida.listaDeJogos.length > 1){
 		for(var i=0; i < Servidor.partida.listaDeJogos.length; i++){
 	    	if(Servidor.partida.listaDeJogos[i].jogador == jogador){
@@ -180,7 +184,6 @@ Servidor.jogadorAdversario = function(jogadoAtual){
 	}
 }
 
-
 Servidor.preparaJogadaCombate = function(jogada){
 	var pecaAtacada = {};
 	var posicaoEmMovimento = {};
@@ -189,7 +192,6 @@ Servidor.preparaJogadaCombate = function(jogada){
 		for(var j=0; j < Servidor.partida.listaDeJogos[i].exercito.length; j++){
 			if(Servidor.partida.listaDeJogos[i].exercito[j].linha == jogada.coordenada.linha &&
 				Servidor.partida.listaDeJogos[i].exercito[j].coluna == jogada.coordenada.coluna){
-
 				pecaAtacada =  Servidor.partida.listaDeJogos[i].exercito[j];
 			}
 			if(Servidor.partida.listaDeJogos[i].exercito[j].id == jogada.idPecaClicada){
@@ -213,21 +215,27 @@ Servidor.excluiPecaDaPartida = function (pecaExcluida){
 		for(var j = 0; j < Servidor.partida.listaDeJogos[i].exercito.length; j++){
 			var pecaNaLista = Servidor.partida.listaDeJogos[i].exercito[j];
 			if(pecaExcluida.id == pecaNaLista.id){
-				Servidor.partida.listaDeJogos[i].exercito.splice(j,1);  //exclui a peca na partida
+				Servidor.partida.listaDeJogos[i].exercito.splice(j,1);  
 			}
 		}
-
 	}
 }
 
+/*Verifica se a partida acabou
+  Se houve vencedor: e o nome
+  Se ficou empatada
+*/
 Servidor.verificaSeParticaAcabou = function(){
     
 var resultVerificacao ={
 	isEmpate: false,
 	nomeVencedor: ""
 }
-   var listaPerdedores = [];
-      
+var listaPerdedores = [];
+
+	/* Percorre a lista de peças de cada jogo para ver se as pecas móveis acabaram
+       Caso ocorra, o respectivo jogador é inserido na lista de perdedores. 
+    */      
    for(var i = 0;  i < Servidor.partida.listaDeJogos.length; i++){
    		var exercito = Servidor.partida.listaDeJogos[i].exercito;
    		var pecasMoveis = 0;
@@ -236,13 +244,11 @@ var resultVerificacao ={
    		if(pecasMoveis == 0){
    			listaPerdedores.push(Servidor.partida.listaDeJogos[i].jogador);
    		}
-
    }
    if(listaPerdedores.length == 2){
  		resultVerificacao.isEmpate = true;
    }
    else if (listaPerdedores.length == 1){
-
    	    resultVerificacao.nomeVencedor = Servidor.getJogadorVencedor(listaPerdedores[0]);
    }
    return resultVerificacao;
@@ -256,14 +262,9 @@ Servidor.getJogadorVencedor = function(jogadorPerdedor){
 	}
 }
 
-Servidor.getIndiceDoJogadorLista = function(){
-
-}
-
-Servidor.realizaCombate = function(combate){ //Exclui a bandeira da partida
+Servidor.realizaCombate = function(combate){ 
     var valorPecaAtacada =  combate.pecaAtacada.valor;
     var valorPecaEmMovimento = combate.pecaEmMovimento.valor;
-
     var jogadorQueAtacou = Servidor.jogadorAdversario(combate.jogadorDaVez);
 
     var resultCombate ={
@@ -274,31 +275,42 @@ Servidor.realizaCombate = function(combate){ //Exclui a bandeira da partida
      	jogadorDaVez: jogadorQueAtacou,
      	movimentaPeca: false,
      	isEmpate: false
-
     }
-    if(valorPecaAtacada == "F"){ // fim de jogo
+
+    /* Se a peca atacada for a bandeira, a partida é encerrada 
+       e jogador que realizou ataque vence a partida
+    */
+    if(valorPecaAtacada == "F"){ 
      	resultCombate.vencedorDaPartida = combate.jogadorDaVez;
-     	Servidor.excluiPecaDaPartida(combate.pecaAtacada); //Exclui a bandeira da partida
+     	Servidor.excluiPecaDaPartida(combate.pecaAtacada); 
      	resultCombate.vencedorDaPartida = jogadorQueAtacou;
      	resultCombate.isEmpate = false;
     }
     else {
-     	if(valorPecaAtacada == "B"){ // se for bomba 
-     		if(parseInt(valorPecaEmMovimento) == 2){ // se for cabo-armeiro desarma bomba
+    	/* Verifica se a peca atacada é a bomba 
+	       e se a peca atacante é o soldado-armeiro: desarma a bomba.
+	       Senão, a bomba distroi a peca atacante 		
+		*/
+     	if(valorPecaAtacada == "B"){  
+     		if(parseInt(valorPecaEmMovimento) == 2){ 
      			resultCombate.vencedorDaJogada = combate.jogadorDaVez;
      			resultCombate.movimentaPeca = true;
-     			Servidor.excluiPecaDaPartida(combate.pecaAtacada);    // exclui a bomba da partida
+     			Servidor.excluiPecaDaPartida(combate.pecaAtacada);    
      		}
      		else {
-     			resultCombate.vencedorDaJogada = jogadorQueAtacou; // bomba destroi
-     			Servidor.excluiPecaDaPartida(combate.pecaEmMovimento); //Exclui a peca destruida pela bomba
+     			resultCombate.vencedorDaJogada = jogadorQueAtacou;
+     			Servidor.excluiPecaDaPartida(combate.pecaEmMovimento);
      		}
      	}
-     	else if(parseInt(valorPecaEmMovimento) == 0){ // Se for espião
+     	/* Verifica se a peca atcante é o espiao 
+	       e se a peca atacada é o marechal: mata o marechal
+	       Senão, o espião é morto pela peca atacante 		
+		*/
+     	else if(parseInt(valorPecaEmMovimento) == 0){ 
 	     		if(parseInt(valorPecaAtacada) == 9){ 
-	     			resultCombate.vencedorDaJogada = combate.valorPecaAtacada; // se for marechal, mata marechal
+	     			resultCombate.vencedorDaJogada = combate.valorPecaAtacada; 
 	     			resultCombate.movimentaPeca = true;
-	     			Servidor.excluiPecaDaPartida(combate.valorPecaAtacada); //Exclui o marechal da partida
+	     			Servidor.excluiPecaDaPartida(combate.valorPecaAtacada); 
 	     		}
 	     		else if(parseInt(valorPecaAtacada) == 0){
 	     				resultCombate.vencedorDaJogada = ""; 
@@ -307,20 +319,28 @@ Servidor.realizaCombate = function(combate){ //Exclui a bandeira da partida
 	     		}
 	     		else{
 	     			resultCombate.vencedorDaJogada = jogadorQueAtacou;
-	     			Servidor.excluiPecaDaPartida(combate.pecaEmMovimento); // Exclui o espião
+	     			Servidor.excluiPecaDaPartida(combate.pecaEmMovimento);
 	     		}
 	    }
+	    /* Verifica se a peca atacante tem a patente de maior valor que 
+	        a peca atacada: peca atacante mata peca atacada
+	    */
 	    else if(parseInt(valorPecaEmMovimento) > parseInt(valorPecaAtacada)){
 	    	 resultCombate.vencedorDaJogada = combate.jogadorDaVez;
 	    	 resultCombate.movimentaPeca = true;
 	    	 Servidor.excluiPecaDaPartida(combate.pecaAtacada);
 	    }
+	    /* Verifica se a peca atacante tem a patente de menor valor que 
+	        a peca atacada: peca atacada mata peca atacante
+	    */
 	    else if(parseInt(valorPecaEmMovimento) < parseInt(valorPecaAtacada)){
 	    	 resultCombate.vencedorDaJogada = jogadorQueAtacou;
 	    	 Servidor.excluiPecaDaPartida(combate.pecaEmMovimento);
 	    } 	
+	    /* No caso de as peca terem a mesma patente: as duas morrem
+	    */
 	    else {
-	    	resultCombate.vencedorDaJogada = ""; //Soldados com mesma patente, nenhum vencedor, os 2 soldados morrem
+	    	resultCombate.vencedorDaJogada = ""; 
 	    	Servidor.excluiPecaDaPartida(combate.pecaAtacada);
 	    	Servidor.excluiPecaDaPartida(combate.pecaEmMovimento);
 	    }
@@ -331,7 +351,6 @@ Servidor.realizaCombate = function(combate){ //Exclui a bandeira da partida
 	   	resultCombate.isEmpate = resultadoVerificacao;
 	   }
     } 
-
    return resultCombate;
 };
 
@@ -339,15 +358,15 @@ Servidor.limpaPartida = function(){
 	Servidor.partida = {};
 };
 
-
+/*Aguardando algma mensagem de conexão */
 io.sockets.on('connection', function(socket) {
 
-	//Chat
+	//Mensagem de chat
 	socket.on('message', function(data){
 		io.sockets.emit("chat", data);
 	});
 
-	socket.on('login', function(nomeJogador){
+    socket.on('login', function(nomeJogador){
 		var quantidadeJogadores = Servidor.partida.jogadores.length;
 		if (quantidadeJogadores < 2) {
 			if(quantidadeJogadores == 1){
@@ -355,10 +374,11 @@ io.sockets.on('connection', function(socket) {
 					io.sockets.emit('loginJaCadastrado', 'Já existe jogador com esse nome!');
 				}else{
 					var jogo = {
-					estado: EstadosDoJogo.PREPARANDO, // Ao clicar no botÃO "Preparar Jogo" o estado do jogo, deste usuario, deve ser setado para "PREPARANDO" 
+					estado: EstadosDoJogo.PREPARANDO, 
 					jogador: nomeJogador,
 					exercito: []
 				};
+				//Associa o socket ao jogador	
 				var socketAuxiliar = {
 					socket: socket,
 					jogador: nomeJogador
@@ -368,16 +388,14 @@ io.sockets.on('connection', function(socket) {
 				if(quantidadeJogadores == 0){
 					Servidor.partida.jogadorDaVez = nomeJogador;
 				}
-
+				// Responde ao usuario se conseguiu logar com sucesso	
 				Servidor.partida.listaDeJogos.push(jogo);
 				Servidor.partida.jogadores.push(nomeJogador);
 				socket.emit('loginSuccess', Servidor.partida);
-				
 				}
 		    }else{
-
 				var jogo = {
-					estado: EstadosDoJogo.PREPARANDO, // Ao clicar no botÃO "Preparar Jogo" o estado do jogo, deste usuario, deve ser setado para "PREPARANDO" 
+					estado: EstadosDoJogo.PREPARANDO, 
 					jogador: nomeJogador,
 					exercito: []
 				};
@@ -385,7 +403,6 @@ io.sockets.on('connection', function(socket) {
 					socket: socket,
 					jogador: nomeJogador
 				}
-				
 				socketsDeJogadores.push(socketAuxiliar);
 				if(quantidadeJogadores == 0){
 					Servidor.partida.jogadorDaVez = nomeJogador;
@@ -393,7 +410,7 @@ io.sockets.on('connection', function(socket) {
 
 				Servidor.partida.listaDeJogos.push(jogo);
 				Servidor.partida.jogadores.push(nomeJogador);
-				socket.emit('loginSuccess', Servidor.partida); // Responde ao usuario se conseguiu logar com sucesso
+				socket.emit('loginSuccess', Servidor.partida); 
 		   }		
 		} else {			
 			io.sockets.emit('loginFalha', 'Jogadores completos! aguarde sua vez.'); //caso contrario
@@ -406,13 +423,13 @@ io.sockets.on('connection', function(socket) {
 		if(Servidor.partida.estado == EstadosDaPartida.AGUARDANDO_INICIAR){
 			socket.emit("jogoRecebido", jogo);
 		}else if(Servidor.partida.estado == EstadosDaPartida.PRONTA_PARA_INICIAR){
-			//alterar o estado dos jogos
+			//Alterar o estado dos jogos
 			for(var i =0; i < Servidor.partida.listaDeJogos.length; i++){
 				Servidor.partida.listaDeJogos[i].estado = EstadosDoJogo.INICIADO;
 			}
+			//Permitir que o jogador 1 (vermelho) sempre comece a partida
 			Servidor.partida.jogadorDaVez = Servidor.partida.jogadores[0];
 			Servidor.partida.estado = EstadosDaPartida.INICIADA;
-			
 			Servidor.enviaPartidasInicial();
 		}
 	});
@@ -435,9 +452,4 @@ io.sockets.on('connection', function(socket) {
 		Servidor.limpaPartida();
 		io.sockets.emit("zeraPartida", Servidor.partida);
 	});
-	
-   	socket.on('disconnect', function() {
-   		
-	   
-  });
 });

@@ -67,8 +67,7 @@ Estado.atualizaJogadores = function() {
 	}
 	Estado.enumeraJogador(jogadores);
 	Jogo.mostraJogadoresOnline(jogadores);
-	Jogo.habilitaButaoPronto;
-	
+	Jogo.habilitaButaoPronto;	
 };
 
 Estado.loginJaCadastrado = function(data){
@@ -93,9 +92,8 @@ Estado.procuraIndicePeca = function(id, jogoAtual) {
 		}
 	}
 };
-
   
- Estado.procuraPeca = function(id, jogoAtual) {
+Estado.procuraPeca = function(id, jogoAtual) {
     for (var i = 0; i < jogoAtual.exercito.length; i++) {
         if (id == jogoAtual.exercito[i].id) {
             return jogoAtual.exercito[i]
@@ -103,11 +101,10 @@ Estado.procuraIndicePeca = function(id, jogoAtual) {
     }
 };
 
-
 Estado.adicionaPecaNoExercito = function(peca) {
 	var jogoAtual = Estado.jogoAtual();
 	var pecaEncontrada = Estado.procuraIndicePeca(peca.id, jogoAtual);
-	if (pecaEncontrada != undefined) {    	//Verifica se a peça ja está adicionada no exercito se tiver apenas atualiza a peça
+	if (pecaEncontrada != undefined) {    
 		peca.posicaoAnterior = jogoAtual.exercito[pecaEncontrada].posicaoAnterior;
 		peca.quantidadeJogadasRepetidas = jogoAtual.exercito[pecaEncontrada].quantidadeJogadasRepetidas;
 		jogoAtual.exercito[pecaEncontrada] = peca;
@@ -161,9 +158,3 @@ Estado.zeraPartida = function(partida){
 	Estado.partida = partida;
 	Tabuleiro.zeraPartida(); 
 };
-
-Estado.disconect = function(){
-	Comunication.disconect();
-}
-
-

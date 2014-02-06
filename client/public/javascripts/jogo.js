@@ -6,8 +6,6 @@ var idNumero = 0;
 
 Jogo.gerarPeca = function(quantidade, patente, cor, valor){
 	for(var i = 0; i < quantidade; i++){
-
-	
 		var id = idNumero + "_" + Estado.jogador + "_" + i;
 		var soldado = $("<div/>").attr("id", id)
 								 .attr("data-patente", patente)
@@ -54,7 +52,7 @@ Jogo.desabilitaButaoPrepararJogo = function(){
 //Verifica se o exercito está completamente posicionado no tabuleiro
 Jogo.validaInicioDoJogo = function(){
 	var jogoAtual = Estado.jogoAtual();
-	if(jogoAtual.exercito.length == 5){
+	if(jogoAtual.exercito.length == 40){
 		return true;
 	}else{
 		alert("O tabuleiro ainda não está completo!");
@@ -74,7 +72,6 @@ Jogo.montaJogoNoClick = function() {
 		var nome = $("#nomeJogador").val();
 
 		Estado.logaJogador(nome, function(){
-			
 			if(Estado.numeroDoJogador == 1){
 				var cor = "vermelho";
 			} else if(Estado.numeroDoJogador == 2){
