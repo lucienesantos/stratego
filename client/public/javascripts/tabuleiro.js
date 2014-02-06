@@ -627,7 +627,6 @@ Tabuleiro.zeraPartida = function(){
     Tabuleiro.montarTabuleiro();
     Jogo.gerarExercito(cor);
     alert("Para jogar outra partida você deve logar novamente!");
-    setTimeout(function(){Tabuleiro.disconect()} , 2000);
 }; 
 
 
