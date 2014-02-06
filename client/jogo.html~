@@ -3,7 +3,7 @@
   <meta charset="utf-8">
   <title>Tabuleiro</title>
   <link rel="stylesheet" href="public/stylesheets/bootstrap.css">  
-  <script type="text/javascript" src="http://192.168.0.101:3000/socket.io/socket.io.js"></script>
+  <script type="text/javascript" src="http://localhost:3000/socket.io/socket.io.js"></script>
   <script src="public/javascripts/jquery/jquery.js"></script>  
   <link rel="stylesheet" href="public/stylesheets/animate.css">  
   <link rel="stylesheet" href="public/stylesheets/scrollbar.css">  
