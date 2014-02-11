@@ -5,12 +5,12 @@ TUTORIAL
 
 1. Instalar o Node.js: v0.10.25
 
-2. Via terminal, entra na pasta stratego/server e executa o commando
-   node app.js
+2. Via terminal, entra na pasta tabuleiro-luciene/server e executa o commando
+   node servidor.js
 
-  e deixa o node rodando a aplicação (app.js)
+  e deixa o node rodando a aplicação (servidor.js)
 
-3. Via gerenciador de arquivo entra na pasta stratego/client  
+3. Via gerenciador de arquivo entra na pasta tabuleiro-luciene/client  
   e abre o arquivo jogo.html
 
   loga o usuario e monta o jogo
