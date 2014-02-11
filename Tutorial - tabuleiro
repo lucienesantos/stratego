@@ -2,12 +2,12 @@ TUTORIAL
 
 1. Instalar o Node.js: v0.10.25
 
-2. Via terminal, entra na pasta stratego/server e executa o commando
+2. Via terminal, entra na pasta stratego-master/server e executa o commando
    node app.js
 
   e deixa o node rodando a aplicação (app.js)
 
-3. Via gerenciador de arquivo entra na pasta stratego/client  
+3. Via gerenciador de arquivo entra na pasta stratego-master/client  
   e abre o arquivo jogo.html
 
   loga o usuario e monta o jogo
